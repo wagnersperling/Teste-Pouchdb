@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>Teste com Pouchdb</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" charset="utf-8" src="pouchdb.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+
+    function insertData(){
+
+        var db = new PouchDB('test_database');
+
+        //Preparing the document
+        doc = {
+            _id : $('#id').val(),
+            name: $('#name').val(),
+            age : $('#age').val()
+        }
+        //Inserting Document
+        db.put(doc, function(err, response) {
+            if (err) {
+                return console.log(err);
+            } else {
+                console.log("Document created Successfully");
+            }
+        });
+    }
+
+    function listData(){    
+        var db = new PouchDB('test_database');
+        db.get($('#idTolist').val(), function(err, doc) {
+            if (err) {
+                return console.log(err);
+            } else {
+                console.log(doc);
+            }
+        });
+
+        list();
+    }
+
+    function updateData() {
+
+        var db = new PouchDB('test_database');
+
+        db.get($('#idToEdit').val()).then(function(doc) {
+            return db.put({
+                _rev: doc._rev,
+                _id : $('#idToEdit').val(),
+                name: $('#newName').val(),
+                age : $('#newAge').val()
+            });
+        });
+    }
+
+
+    function list(){
+        var db = new PouchDB('test_database');
+        db.get($('#idTolist').val()).then(function(doc) {
+            $('#codigo').html(doc._id);
+            $('#idade1').html(doc.age);
+            $('#nome').html(doc.name);        
+        });
+    }
+
+
+    function deleteDoc(){
+        var db = new PouchDB('test_database');
+        db.get($('#idToExclude').val()).then(function(doc) {
+            db.remove(doc._id, doc._rev);     
+        });
+
+    }
+
+    </script>
+  </head>
+  <body>
+    <h1>Pouchdb</h1>
+    <label for="id">Código:</label>
+    <input type="text" id="id">
+    <br>
+    <label for="age">Nome:</label>
+    <input type="text" id="name">
+    <br>
+    <label for="name">Idade:</label>
+    <input type="text" id="age">
+    <br>
+    <button type="button" onclick="insertData()">Inserir</button>
+    <br>
+    <label for="name">Código a ser listado:</label>
+    <input type="text" id="idTolist">
+    <br>
+    <button type="button" onclick="listData()">listar</button>
+
+    <br>
+    <label for="name">Código a ser editado:</label>
+    <input type="text" id="idToEdit">
+    <br>
+    <label for="age">Nome:</label>
+    <input type="text" id="newName">
+    <br>
+    <label for="name">Idade:</label>
+    <input type="text" id="newAge">
+    <br>
+    <button type="button" onclick="updateData()">editar</button>
+    <br>
+
+
+    <label for="name">Código a ser excluido:</label>
+    <input type="text" id="idToExclude">
+    <br>
+    <button type="button" onclick="deleteDoc()">excluir</button>
+    <br>
+    <label id="codigo"></label>
+    <br>
+    <label id="nome"></label>
+    <br>
+    <label id="idade1"></label> 
+
+  </body>
+</html>
